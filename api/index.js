@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   const targetUrl = parsedUrl.searchParams.get('url');
 
   if (!targetUrl) {
