@@ -1,5 +1,6 @@
 export default async function handler(req, res) {
-  const targetUrl = req.query.url;
+  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+  const targetUrl = parsedUrl.searchParams.get('url');
 
   if (!targetUrl) {
     return res.status(400).send("No url provided. Use ?url=YOUR_LINK");
@@ -14,13 +15,13 @@ export default async function handler(req, res) {
       }
     });
 
-    const body = await response.text();
+    const arrayBuffer = await response.arrayBuffer();
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Content-Type', response.headers.get('content-type') || 'application/vnd.apple.mpegurl');
 
-    res.status(200).send(body);
+    res.status(200).send(Buffer.from(arrayBuffer));
   } catch (error) {
     res.status(500).send("Error fetching stream");
   }
